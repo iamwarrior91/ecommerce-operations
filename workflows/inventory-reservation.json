@@ -19,7 +19,7 @@
             {
               "id": "9a8e07b9-76f8-496c-8787-ec16dbe0531a",
               "name": "event_id",
-              "value": "TEST-ORDER-001-RESERVE",
+              "value": "TEST-ORDER-001-SHIP",
               "type": "string"
             },
             {
@@ -139,78 +139,13 @@
     },
     {
       "parameters": {
-        "assignments": {
-          "assignments": [
-            {
-              "id": "9e7a68f7-594e-474f-b780-4e9852223db8",
-              "name": "Event ID ",
-              "value": "={{ $('Test Order').first().json.event_id }}",
-              "type": "string"
-            },
-            {
-              "id": "f26b4786-3fc1-4914-aafa-d9c3fd8e3d96",
-              "name": "Timestamp",
-              "value": "={{ $now.toFormat('yyyy-MM-dd HH:mm:ss') }}",
-              "type": "string"
-            },
-            {
-              "id": "d098dfb6-2509-4b18-9136-6fbfc51976bc",
-              "name": "SKU",
-              "value": "={{ $('Test Order').first().json.sku }}",
-              "type": "string"
-            },
-            {
-              "id": "99fe8e55-57a5-479e-a240-4d1f159a9556",
-              "name": "Event type",
-              "value": "Reserve",
-              "type": "string"
-            },
-            {
-              "id": "7044299e-8875-476f-83c7-9e27e141305f",
-              "name": "Order / reference",
-              "value": "={{ $('Test Order').first().json.order_id }}",
-              "type": "string"
-            },
-            {
-              "id": "01787420-bacb-4c00-9d66-48ad054798a9",
-              "name": "On hand change",
-              "value": "0",
-              "type": "number"
-            },
-            {
-              "id": "92b75015-5174-461b-a4c9-c2307ed2616f",
-              "name": "Reserved change",
-              "value": "={{ $('Test Order').first().json.quantity }}",
-              "type": "number"
-            },
-            {
-              "id": "235778db-ab3b-4b29-baf4-f0c7d5c3840e",
-              "name": "Source",
-              "value": "n8n test",
-              "type": "string"
-            }
-          ]
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.set",
-      "typeVersion": 3.5,
-      "position": [
-        256,
-        -144
-      ],
-      "id": "fb6235e7-0472-4ac9-8a75-4fbff2d19f2c",
-      "name": "Prepare Reservation"
-    },
-    {
-      "parameters": {
         "method": "PUT",
         "url": "={{ 'https://sheets.googleapis.com/v4/spreadsheets/14tQW_PhDiIsmKy9FvRWwH2zJrzleN0PjWConfEcOP-c/values/Movements!A' + $json.nextRow + ':J' + $json.nextRow + '?valueInputOption=USER_ENTERED' }}",
         "authentication": "predefinedCredentialType",
         "nodeCredentialType": "googleSheetsOAuth2Api",
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ {\n  majorDimension: \"ROWS\",\n  values: [[\n    $('Test Order').first().json.event_id,\n    $('Prepare Reservation').first().json.Timestamp,\n    $('Prepare Reservation').first().json.SKU,\n    $('Prepare Reservation').first().json[\"Event type\"],\n    $('Prepare Reservation').first().json[\"Order / reference\"],\n    $('Prepare Reservation').first().json[\"On hand change\"],\n    $('Prepare Reservation').first().json[\"Reserved change\"],\n    $('Prepare Reservation').first().json.Source,\n    \"\",\n    \"\"\n  ]]\n} }}",
+        "jsonBody": "={{ {\n  majorDimension: \"ROWS\",\n  values: [[\n    $('Test Order').first().json.event_id,\n    $('Prepare Movement').first().json.Timestamp,\n    $('Prepare Movement').first().json.SKU,\n    $('Prepare Movement').first().json[\"Event type\"],\n    $('Prepare Movement').first().json[\"Order / reference\"],\n    $('Prepare Movement').first().json[\"On hand change\"],\n    $('Prepare Movement').first().json[\"Reserved change\"],\n    $('Prepare Movement').first().json.Source,\n    \"\",\n    \"\"\n  ]]\n} }}",
         "options": {}
       },
       "type": "n8n-nodes-base.httpRequest",
@@ -262,6 +197,71 @@
       ],
       "id": "c877bd2d-3348-40fd-bfbd-a0e4734499c6",
       "name": "Choose Movement Row"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "9e7a68f7-594e-474f-b780-4e9852223db8",
+              "name": "Event ID ",
+              "value": "={{ $('Test Order').first().json.event_id }}",
+              "type": "string"
+            },
+            {
+              "id": "f26b4786-3fc1-4914-aafa-d9c3fd8e3d96",
+              "name": "Timestamp",
+              "value": "={{ $now.toFormat('yyyy-MM-dd HH:mm:ss') }}",
+              "type": "string"
+            },
+            {
+              "id": "d098dfb6-2509-4b18-9136-6fbfc51976bc",
+              "name": "SKU",
+              "value": "={{ $('Test Order').first().json.sku }}",
+              "type": "string"
+            },
+            {
+              "id": "99fe8e55-57a5-479e-a240-4d1f159a9556",
+              "name": "Event type",
+              "value": "Ship",
+              "type": "string"
+            },
+            {
+              "id": "7044299e-8875-476f-83c7-9e27e141305f",
+              "name": "Order / reference",
+              "value": "={{ $('Test Order').first().json.order_id }}",
+              "type": "string"
+            },
+            {
+              "id": "01787420-bacb-4c00-9d66-48ad054798a9",
+              "name": "=On hand change",
+              "value": "={{ -$('Test Order').first().json.quantity }}",
+              "type": "number"
+            },
+            {
+              "id": "92b75015-5174-461b-a4c9-c2307ed2616f",
+              "name": "=Reserved change",
+              "value": "={{ -$('Test Order').first().json.quantity }}",
+              "type": "number"
+            },
+            {
+              "id": "235778db-ab3b-4b29-baf4-f0c7d5c3840e",
+              "name": "Source",
+              "value": "n8n test",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        256,
+        -144
+      ],
+      "id": "fb6235e7-0472-4ac9-8a75-4fbff2d19f2c",
+      "name": "Prepare Movement"
     }
   ],
   "pinData": {},
@@ -303,18 +303,7 @@
       "main": [
         [
           {
-            "node": "Prepare Reservation",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Prepare Reservation": {
-      "main": [
-        [
-          {
-            "node": "Read Movement Rows",
+            "node": "Prepare Movement",
             "type": "main",
             "index": 0
           }
@@ -342,6 +331,17 @@
           }
         ]
       ]
+    },
+    "Prepare Movement": {
+      "main": [
+        [
+          {
+            "node": "Read Movement Rows",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "active": false,
@@ -349,7 +349,7 @@
     "executionOrder": "v1",
     "binaryMode": "separate"
   },
-  "versionId": "06f4cb6d-d23c-4cc7-8dbf-138b976f0eba",
+  "versionId": "84ccc08d-954a-4d05-9741-d05c6e27d37d",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "e5f6f0794d76a7267ccad955d36717f75b12cd6b8e74b8b55918288283ba4d40"
