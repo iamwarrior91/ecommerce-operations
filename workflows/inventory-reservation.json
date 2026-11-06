@@ -1,0 +1,360 @@
+{
+  "name": "Ecommerce Inventory - Test Order",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -656,
+        0
+      ],
+      "id": "48503e25-f415-474d-a117-b9c9b39ebcc9",
+      "name": "Start Test"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "9a8e07b9-76f8-496c-8787-ec16dbe0531a",
+              "name": "event_id",
+              "value": "TEST-ORDER-001-RESERVE",
+              "type": "string"
+            },
+            {
+              "id": "1f59c2e4-6bbc-4293-90ba-4a9d791f30f4",
+              "name": "order_id",
+              "value": "TEST-ORDER-001",
+              "type": "string"
+            },
+            {
+              "id": "8192c2ae-812b-4e77-8f2e-a7ce3d4cef5c",
+              "name": "sku",
+              "value": "APP-003",
+              "type": "string"
+            },
+            {
+              "id": "1ff73607-0b64-4883-ae91-6d1469e3211c",
+              "name": "quantity",
+              "value": 1,
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        -432,
+        0
+      ],
+      "id": "05fcfe50-0867-4a3b-b380-37816af2582c",
+      "name": "Test Order"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "14tQW_PhDiIsmKy9FvRWwH2zJrzleN0PjWConfEcOP-c",
+          "mode": "list",
+          "cachedResultName": "Ecommerce Inventory Tracker",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/14tQW_PhDiIsmKy9FvRWwH2zJrzleN0PjWConfEcOP-c/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1845832881,
+          "mode": "list",
+          "cachedResultName": "Movements",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/14tQW_PhDiIsmKy9FvRWwH2zJrzleN0PjWConfEcOP-c/edit#gid=1845832881"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "=Event ID",
+              "lookupValue": "={{ $json.event_id }}"
+            }
+          ]
+        },
+        "options": {
+          "dataLocationOnSheet": {
+            "values": {
+              "rangeDefinition": "specifyRange",
+              "headerRow": 5,
+              "firstDataRow": 6
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -208,
+        0
+      ],
+      "id": "cb799c1d-a208-4c62-a1fe-d5742319918c",
+      "name": "Find Existing Event",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "ZA1EqEA6zPRJ3peH",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 4
+          },
+          "conditions": [
+            {
+              "id": "cd2600dd-bc7e-4ddf-8d7a-85f6c69c84f7",
+              "leftValue": "={{ $json[\"Event ID\"] }}",
+              "rightValue": "=",
+              "operator": {
+                "type": "string",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.4,
+      "position": [
+        16,
+        0
+      ],
+      "id": "2662bc36-a975-416e-994e-459f1a24de80",
+      "name": "Is New Event?"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "9e7a68f7-594e-474f-b780-4e9852223db8",
+              "name": "Event ID ",
+              "value": "={{ $('Test Order').first().json.event_id }}",
+              "type": "string"
+            },
+            {
+              "id": "f26b4786-3fc1-4914-aafa-d9c3fd8e3d96",
+              "name": "Timestamp",
+              "value": "={{ $now.toFormat('yyyy-MM-dd HH:mm:ss') }}",
+              "type": "string"
+            },
+            {
+              "id": "d098dfb6-2509-4b18-9136-6fbfc51976bc",
+              "name": "SKU",
+              "value": "={{ $('Test Order').first().json.sku }}",
+              "type": "string"
+            },
+            {
+              "id": "99fe8e55-57a5-479e-a240-4d1f159a9556",
+              "name": "Event type",
+              "value": "Reserve",
+              "type": "string"
+            },
+            {
+              "id": "7044299e-8875-476f-83c7-9e27e141305f",
+              "name": "Order / reference",
+              "value": "={{ $('Test Order').first().json.order_id }}",
+              "type": "string"
+            },
+            {
+              "id": "01787420-bacb-4c00-9d66-48ad054798a9",
+              "name": "On hand change",
+              "value": "0",
+              "type": "number"
+            },
+            {
+              "id": "92b75015-5174-461b-a4c9-c2307ed2616f",
+              "name": "Reserved change",
+              "value": "={{ $('Test Order').first().json.quantity }}",
+              "type": "number"
+            },
+            {
+              "id": "235778db-ab3b-4b29-baf4-f0c7d5c3840e",
+              "name": "Source",
+              "value": "n8n test",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        256,
+        -144
+      ],
+      "id": "fb6235e7-0472-4ac9-8a75-4fbff2d19f2c",
+      "name": "Prepare Reservation"
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "={{ 'https://sheets.googleapis.com/v4/spreadsheets/14tQW_PhDiIsmKy9FvRWwH2zJrzleN0PjWConfEcOP-c/values/Movements!A' + $json.nextRow + ':J' + $json.nextRow + '?valueInputOption=USER_ENTERED' }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleSheetsOAuth2Api",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ {\n  majorDimension: \"ROWS\",\n  values: [[\n    $('Test Order').first().json.event_id,\n    $('Prepare Reservation').first().json.Timestamp,\n    $('Prepare Reservation').first().json.SKU,\n    $('Prepare Reservation').first().json[\"Event type\"],\n    $('Prepare Reservation').first().json[\"Order / reference\"],\n    $('Prepare Reservation').first().json[\"On hand change\"],\n    $('Prepare Reservation').first().json[\"Reserved change\"],\n    $('Prepare Reservation').first().json.Source,\n    \"\",\n    \"\"\n  ]]\n} }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        928,
+        -144
+      ],
+      "id": "e188c630-c962-4028-a16f-642f23764b44",
+      "name": "Write Movement",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "ZA1EqEA6zPRJ3peH",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://sheets.googleapis.com/v4/spreadsheets/14tQW_PhDiIsmKy9FvRWwH2zJrzleN0PjWConfEcOP-c/values/Movements!A6:J1005",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleSheetsOAuth2Api",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        480,
+        -144
+      ],
+      "id": "dcc64588-b380-4e70-be6c-57cb8e86656a",
+      "name": "Read Movement Rows",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "ZA1EqEA6zPRJ3peH",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const rows = $input.first().json.values ?? [];\nconst nextRow = 6 + rows.length;\n\nif (nextRow > 1005) {\n  throw new Error('Movement capacity reached. Extend the tracker first.');\n}\n\nreturn [{ json: { nextRow } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        704,
+        -144
+      ],
+      "id": "c877bd2d-3348-40fd-bfbd-a0e4734499c6",
+      "name": "Choose Movement Row"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Start Test": {
+      "main": [
+        [
+          {
+            "node": "Test Order",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Test Order": {
+      "main": [
+        [
+          {
+            "node": "Find Existing Event",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Find Existing Event": {
+      "main": [
+        [
+          {
+            "node": "Is New Event?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is New Event?": {
+      "main": [
+        [
+          {
+            "node": "Prepare Reservation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Reservation": {
+      "main": [
+        [
+          {
+            "node": "Read Movement Rows",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Movement Rows": {
+      "main": [
+        [
+          {
+            "node": "Choose Movement Row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Choose Movement Row": {
+      "main": [
+        [
+          {
+            "node": "Write Movement",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "06f4cb6d-d23c-4cc7-8dbf-138b976f0eba",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "e5f6f0794d76a7267ccad955d36717f75b12cd6b8e74b8b55918288283ba4d40"
+  },
+  "nodeGroups": [],
+  "id": "m8BzQQjU6z8xUXa7",
+  "tags": []
+}
