@@ -6,7 +6,7 @@
       "type": "n8n-nodes-base.manualTrigger",
       "typeVersion": 1,
       "position": [
-        -656,
+        -736,
         0
       ],
       "id": "48503e25-f415-474d-a117-b9c9b39ebcc9",
@@ -19,13 +19,13 @@
             {
               "id": "9a8e07b9-76f8-496c-8787-ec16dbe0531a",
               "name": "event_id",
-              "value": "TEST-ORDER-001-SHIP",
+              "value": "TEST-RECEIPT-001",
               "type": "string"
             },
             {
               "id": "1f59c2e4-6bbc-4293-90ba-4a9d791f30f4",
               "name": "order_id",
-              "value": "TEST-ORDER-001",
+              "value": "TEST-RESTOCK-001",
               "type": "string"
             },
             {
@@ -39,6 +39,12 @@
               "name": "quantity",
               "value": 1,
               "type": "number"
+            },
+            {
+              "id": "cac8fbbb-4eee-47d8-826c-0fb6bb2dc274",
+              "name": "event_type",
+              "value": "Receipt",
+              "type": "string"
             }
           ]
         },
@@ -47,7 +53,7 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.5,
       "position": [
-        -432,
+        -512,
         0
       ],
       "id": "05fcfe50-0867-4a3b-b380-37816af2582c",
@@ -90,7 +96,7 @@
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.7,
       "position": [
-        -208,
+        -288,
         0
       ],
       "id": "cb799c1d-a208-4c62-a1fe-d5742319918c",
@@ -131,7 +137,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.4,
       "position": [
-        16,
+        -64,
         0
       ],
       "id": "2662bc36-a975-416e-994e-459f1a24de80",
@@ -151,7 +157,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.5,
       "position": [
-        928,
+        848,
         -144
       ],
       "id": "e188c630-c962-4028-a16f-642f23764b44",
@@ -173,7 +179,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.5,
       "position": [
-        480,
+        400,
         -144
       ],
       "id": "dcc64588-b380-4e70-be6c-57cb8e86656a",
@@ -192,7 +198,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        704,
+        624,
         -144
       ],
       "id": "c877bd2d-3348-40fd-bfbd-a0e4734499c6",
@@ -223,7 +229,7 @@
             {
               "id": "99fe8e55-57a5-479e-a240-4d1f159a9556",
               "name": "Event type",
-              "value": "Ship",
+              "value": "={{ $('Test Order').first().json.event_type }}",
               "type": "string"
             },
             {
@@ -234,14 +240,14 @@
             },
             {
               "id": "01787420-bacb-4c00-9d66-48ad054798a9",
-              "name": "=On hand change",
-              "value": "={{ -$('Test Order').first().json.quantity }}",
+              "name": "On hand change",
+              "value": "={{ ({ Reserve: 0, Ship: -1, Cancel: 0, Receipt: 1, Return: 1 })[$('Test Order').first().json.event_type] * $('Test Order').first().json.quantity }}",
               "type": "number"
             },
             {
               "id": "92b75015-5174-461b-a4c9-c2307ed2616f",
-              "name": "=Reserved change",
-              "value": "={{ -$('Test Order').first().json.quantity }}",
+              "name": "Reserved change",
+              "value": "={{ ({ Reserve: 1, Ship: -1, Cancel: -1, Receipt: 0, Return: 0 })[$('Test Order').first().json.event_type] * $('Test Order').first().json.quantity }}",
               "type": "number"
             },
             {
@@ -257,7 +263,7 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.5,
       "position": [
-        256,
+        176,
         -144
       ],
       "id": "fb6235e7-0472-4ac9-8a75-4fbff2d19f2c",
@@ -349,7 +355,7 @@
     "executionOrder": "v1",
     "binaryMode": "separate"
   },
-  "versionId": "84ccc08d-954a-4d05-9741-d05c6e27d37d",
+  "versionId": "d53b4196-db10-4647-96b4-8d3acd6d7369",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "e5f6f0794d76a7267ccad955d36717f75b12cd6b8e74b8b55918288283ba4d40"
