@@ -1,0 +1,798 @@
+{
+  "name": "Order Event Intake",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Record an Order Event",
+        "formDescription": "Use this form to record a test order or cancellation. If you’re cancelling an order, enter the same Order ID you used when you placed it.",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Event Type",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Order placed"
+                  },
+                  {
+                    "option": "Order cancelled"
+                  }
+                ]
+              },
+              "requiredField": true
+            }
+          ]
+        },
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.6,
+      "position": [
+        -576,
+        144
+      ],
+      "id": "9b1b7c90-2071-4f09-b76c-380f2107ca1f",
+      "name": "Receive Order Event",
+      "webhookId": "27130af5-81c8-4140-acaa-add8652b7f9a"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 4
+          },
+          "conditions": [
+            {
+              "id": "93d02f52-b3f3-4281-a58c-9aadc065683a",
+              "leftValue": "={{ $json[\"Event Type\"] }}",
+              "rightValue": "Order placed",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.4,
+      "position": [
+        -320,
+        144
+      ],
+      "id": "3605832e-4dcf-4526-aa0c-3248c50b6230",
+      "name": "Is This a New Order?"
+    },
+    {
+      "parameters": {
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "SKU"
+            },
+            {
+              "fieldLabel": "Quantity",
+              "fieldType": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.form",
+      "typeVersion": 2.5,
+      "position": [
+        352,
+        32
+      ],
+      "id": "9194409f-2615-4de8-9e12-035f2290acdd",
+      "name": "Enter Order Details",
+      "webhookId": "66896f1c-6f90-4b5f-a440-bf11d143bded"
+    },
+    {
+      "parameters": {
+        "defineForm": "json",
+        "jsonOutput": "={{ JSON.stringify([\n  {\n    fieldLabel: \"Order ID\",\n    fieldName: \"Order ID\",\n    fieldType: \"dropdown\",\n    fieldOptions: { values: $json.orderChoices },\n    requiredField: true\n  }\n]) }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.form",
+      "typeVersion": 2.5,
+      "position": [
+        320,
+        224
+      ],
+      "id": "b7207e4c-8eb6-450d-95a2-8ea0cfb597b8",
+      "name": "Enter Cancellation Details",
+      "webhookId": "8a25f53e-467e-4ffc-896b-4187dbccf1d5"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1a9bcfa7-fb1e-4f36-a759-c46031f7c148",
+              "name": "order_id",
+              "value": "={{ 'DEMO-ORDER-' + $execution.id }}",
+              "type": "string"
+            },
+            {
+              "id": "551da8cf-5e46-4b0e-b4cc-fc5a06aab0ad",
+              "name": "event_id",
+              "value": "={{ 'DEMO-ORDER-' + $execution.id + '-PLACED' }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        544,
+        32
+      ],
+      "id": "e7a5bd7b-e863-4cef-b704-2b6459b47eea",
+      "name": "Generate Order IDs"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "14tQW_PhDiIsmKy9FvRWwH2zJrzleN0PjWConfEcOP-c",
+          "mode": "list",
+          "cachedResultName": "Ecommerce Inventory Tracker",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/14tQW_PhDiIsmKy9FvRWwH2zJrzleN0PjWConfEcOP-c/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 336201324,
+          "mode": "list",
+          "cachedResultName": "Order Events",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/14tQW_PhDiIsmKy9FvRWwH2zJrzleN0PjWConfEcOP-c/edit#gid=336201324"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Event ID": "={{ $json.event_id }}",
+            "Order ID": "={{ $json.order_id }}",
+            "Event Type": "Order placed",
+            "SKU": "={{ $json.SKU }}",
+            "Quantity": "={{ $json.Quantity }}",
+            "Submitted At": "={{ $json.submittedAt }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Event ID",
+              "displayName": "Event ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Order ID",
+              "displayName": "Order ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Event Type",
+              "displayName": "Event Type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "SKU",
+              "displayName": "SKU",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Quantity",
+              "displayName": "Quantity",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Submitted At",
+              "displayName": "Submitted At",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        752,
+        32
+      ],
+      "id": "f7fb1ffa-ef1a-4fe4-91af-f4f767eb2693",
+      "name": "Log Order Placed",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "ZA1EqEA6zPRJ3peH",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "14tQW_PhDiIsmKy9FvRWwH2zJrzleN0PjWConfEcOP-c",
+          "mode": "list",
+          "cachedResultName": "Ecommerce Inventory Tracker",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/14tQW_PhDiIsmKy9FvRWwH2zJrzleN0PjWConfEcOP-c/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 336201324,
+          "mode": "list",
+          "cachedResultName": "Order Events",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/14tQW_PhDiIsmKy9FvRWwH2zJrzleN0PjWConfEcOP-c/edit#gid=336201324"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Order ID",
+              "lookupValue": "={{ $json[\"Order ID\"] }}"
+            },
+            {
+              "lookupColumn": "Event Type",
+              "lookupValue": "Order placed"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        480,
+        224
+      ],
+      "id": "1dea9f4e-be21-4f0c-af3b-dfce80c3c68f",
+      "name": "Find Original Order",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "ZA1EqEA6zPRJ3peH",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "816b243d-49c7-4b2c-8587-935c24a3293f",
+              "name": "Event ID",
+              "value": "={{ $json[\"Order ID\"] + '-CANCELLED' }}",
+              "type": "string"
+            },
+            {
+              "id": "fa2afae1-3db6-426e-9b7c-9781e794faf2",
+              "name": "Order ID",
+              "value": "={{ $json[\"Order ID\"] }}",
+              "type": "string"
+            },
+            {
+              "id": "83663d2e-d21b-4286-9c6e-97238eb9bc7b",
+              "name": "Event Type",
+              "value": "Order cancelled",
+              "type": "string"
+            },
+            {
+              "id": "c9b606cc-746f-4479-9f80-6700812a87a4",
+              "name": "SKU",
+              "value": "={{ $json.SKU }}",
+              "type": "string"
+            },
+            {
+              "id": "cb1edc9d-0ad1-4a7c-aea5-cc2ebfbedfae",
+              "name": "Quantity",
+              "value": "={{ $json.Quantity }}",
+              "type": "number"
+            },
+            {
+              "id": "221041bc-37b2-43d1-89cd-f2e5d42d9d31",
+              "name": "Submitted At",
+              "value": "={{ $('Enter Cancellation Details').first().json.submittedAt }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        640,
+        224
+      ],
+      "id": "dea85bd1-3da4-49f6-8d62-6dce9c84c71b",
+      "name": "Prepare Cancellation"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "14tQW_PhDiIsmKy9FvRWwH2zJrzleN0PjWConfEcOP-c",
+          "mode": "list",
+          "cachedResultName": "Ecommerce Inventory Tracker",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/14tQW_PhDiIsmKy9FvRWwH2zJrzleN0PjWConfEcOP-c/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 336201324,
+          "mode": "list",
+          "cachedResultName": "Order Events",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/14tQW_PhDiIsmKy9FvRWwH2zJrzleN0PjWConfEcOP-c/edit#gid=336201324"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Event ID",
+              "lookupValue": "={{ $json[\"Event ID\"] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        816,
+        224
+      ],
+      "id": "0f202404-bed3-4f34-a8d2-89711fdf4947",
+      "name": "Find Existing Cancellation",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "ZA1EqEA6zPRJ3peH",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 4
+          },
+          "conditions": [
+            {
+              "id": "fd1440b4-fbeb-4750-bf78-778b0e547ed1",
+              "leftValue": "={{ $json[\"Event ID\"] || \"\" }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.4,
+      "position": [
+        992,
+        224
+      ],
+      "id": "88cfb456-9b65-4b77-9bfb-f6430d487519",
+      "name": "Is This a New Cancellation?"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "14tQW_PhDiIsmKy9FvRWwH2zJrzleN0PjWConfEcOP-c",
+          "mode": "list",
+          "cachedResultName": "Ecommerce Inventory Tracker",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/14tQW_PhDiIsmKy9FvRWwH2zJrzleN0PjWConfEcOP-c/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 336201324,
+          "mode": "list",
+          "cachedResultName": "Order Events",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/14tQW_PhDiIsmKy9FvRWwH2zJrzleN0PjWConfEcOP-c/edit#gid=336201324"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Event ID": "={{ $('Prepare Cancellation').first().json[\"Event ID\"] }}",
+            "Order ID": "={{ $('Prepare Cancellation').first().json[\"Order ID\"] }}",
+            "Event Type": "={{ $('Prepare Cancellation').first().json[\"Event Type\"] }}",
+            "SKU": "={{ $('Prepare Cancellation').first().json.SKU }}",
+            "Quantity": "={{ $('Prepare Cancellation').first().json.Quantity }}",
+            "Submitted At": "={{ $('Prepare Cancellation').first().json[\"Submitted At\"] }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Event ID",
+              "displayName": "Event ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Order ID",
+              "displayName": "Order ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Event Type",
+              "displayName": "Event Type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "SKU",
+              "displayName": "SKU",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Quantity",
+              "displayName": "Quantity",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Submitted At",
+              "displayName": "Submitted At",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1184,
+        144
+      ],
+      "id": "4b529eda-727f-475a-b8a7-cb97a603301d",
+      "name": "Log Order Cancelled",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "ZA1EqEA6zPRJ3peH",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "completion",
+        "completionTitle": "Order Cancelled",
+        "completionMessage": "Your cancellation has been recorded.",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.form",
+      "typeVersion": 2.5,
+      "position": [
+        1392,
+        144
+      ],
+      "id": "bac0363d-d86c-4bb1-82c7-04326f6f30c0",
+      "name": "Show Cancellation Confirmation",
+      "webhookId": "e27758c5-1a7f-4976-9f8e-cb1fb1826bb0"
+    },
+    {
+      "parameters": {
+        "operation": "completion",
+        "completionTitle": "Order already cancelled",
+        "completionMessage": "A cancellation has already been recorded for this order.",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.form",
+      "typeVersion": 2.5,
+      "position": [
+        1184,
+        320
+      ],
+      "id": "c6ac9e1c-acb0-44a4-b6d5-e98f5ce8d5a5",
+      "name": "Show Already Cancelled",
+      "webhookId": "2c54b15e-5594-459b-b393-4e1fc5eab19c"
+    },
+    {
+      "parameters": {
+        "operation": "completion",
+        "completionTitle": "Order placed",
+        "completionMessage": "={{ 'Your Order ID is ' + $('Generate Order IDs').first().json.order_id + '. Save it in case you need to cancel.' }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.form",
+      "typeVersion": 2.5,
+      "position": [
+        976,
+        32
+      ],
+      "id": "747a6e80-c4a4-442c-b0b6-2d1725e9cb02",
+      "name": "Show Order Confirmation",
+      "webhookId": "e5eddfe2-0b3b-4d15-a687-0b0015645843"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "14tQW_PhDiIsmKy9FvRWwH2zJrzleN0PjWConfEcOP-c",
+          "mode": "list",
+          "cachedResultName": "Ecommerce Inventory Tracker",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/14tQW_PhDiIsmKy9FvRWwH2zJrzleN0PjWConfEcOP-c/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 336201324,
+          "mode": "list",
+          "cachedResultName": "Order Events",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/14tQW_PhDiIsmKy9FvRWwH2zJrzleN0PjWConfEcOP-c/edit#gid=336201324"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -48,
+        224
+      ],
+      "id": "ddb260e0-af32-4ae3-bbe3-2d23b347fce6",
+      "name": "Read Order Events",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "ZA1EqEA6zPRJ3peH",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const placed = new Set();\nconst cancelled = new Set();\n\nfor (const { json: row } of $input.all()) {\n  const orderId = String(row[\"Order ID\"] ?? \"\").trim();\n  const eventType = String(row[\"Event Type\"] ?? \"\").trim();\n\n  if (!orderId) continue;\n  if (eventType === \"Order placed\") placed.add(orderId);\n  if (eventType === \"Order cancelled\") cancelled.add(orderId);\n}\n\nconst orderChoices = [...placed]\n  .filter(orderId => !cancelled.has(orderId))\n  .map(orderId => ({ option: orderId }));\n\nreturn [{ json: { orderChoices } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        144,
+        224
+      ],
+      "id": "19340cb1-1315-46a6-b9e8-901eb4f40fb0",
+      "name": "Build Order Choices"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Receive Order Event": {
+      "main": [
+        [
+          {
+            "node": "Is This a New Order?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is This a New Order?": {
+      "main": [
+        [
+          {
+            "node": "Enter Order Details",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Read Order Events",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enter Order Details": {
+      "main": [
+        [
+          {
+            "node": "Generate Order IDs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Order IDs": {
+      "main": [
+        [
+          {
+            "node": "Log Order Placed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enter Cancellation Details": {
+      "main": [
+        [
+          {
+            "node": "Find Original Order",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Find Original Order": {
+      "main": [
+        [
+          {
+            "node": "Prepare Cancellation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Cancellation": {
+      "main": [
+        [
+          {
+            "node": "Find Existing Cancellation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Find Existing Cancellation": {
+      "main": [
+        [
+          {
+            "node": "Is This a New Cancellation?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is This a New Cancellation?": {
+      "main": [
+        [
+          {
+            "node": "Log Order Cancelled",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Show Already Cancelled",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log Order Cancelled": {
+      "main": [
+        [
+          {
+            "node": "Show Cancellation Confirmation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log Order Placed": {
+      "main": [
+        [
+          {
+            "node": "Show Order Confirmation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Order Events": {
+      "main": [
+        [
+          {
+            "node": "Build Order Choices",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Order Choices": {
+      "main": [
+        [
+          {
+            "node": "Enter Cancellation Details",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "a6813d15-c274-42b3-bf79-9e6cbb129f37",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "e5f6f0794d76a7267ccad955d36717f75b12cd6b8e74b8b55918288283ba4d40"
+  },
+  "nodeGroups": [],
+  "id": "PFjQpek86b7Bci2K",
+  "tags": []
+}
