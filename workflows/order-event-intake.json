@@ -89,8 +89,8 @@
       "type": "n8n-nodes-base.form",
       "typeVersion": 2.5,
       "position": [
-        352,
-        32
+        32,
+        16
       ],
       "id": "9194409f-2615-4de8-9e12-035f2290acdd",
       "name": "Enter Order Details",
@@ -105,7 +105,7 @@
       "type": "n8n-nodes-base.form",
       "typeVersion": 2.5,
       "position": [
-        320,
+        544,
         224
       ],
       "id": "b7207e4c-8eb6-450d-95a2-8ea0cfb597b8",
@@ -136,8 +136,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.5,
       "position": [
-        544,
-        32
+        208,
+        16
       ],
       "id": "e7a5bd7b-e863-4cef-b704-2b6459b47eea",
       "name": "Generate Order IDs"
@@ -234,8 +234,8 @@
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.7,
       "position": [
-        752,
-        32
+        400,
+        16
       ],
       "id": "f7fb1ffa-ef1a-4fe4-91af-f4f767eb2693",
       "name": "Log Order Placed",
@@ -279,7 +279,7 @@
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.7,
       "position": [
-        480,
+        704,
         224
       ],
       "id": "1dea9f4e-be21-4f0c-af3b-dfce80c3c68f",
@@ -338,7 +338,7 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.5,
       "position": [
-        640,
+        864,
         224
       ],
       "id": "dea85bd1-3da4-49f6-8d62-6dce9c84c71b",
@@ -373,7 +373,7 @@
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.7,
       "position": [
-        816,
+        1040,
         224
       ],
       "id": "0f202404-bed3-4f34-a8d2-89711fdf4947",
@@ -414,7 +414,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.4,
       "position": [
-        992,
+        1216,
         224
       ],
       "id": "88cfb456-9b65-4b77-9bfb-f6430d487519",
@@ -512,7 +512,7 @@
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.7,
       "position": [
-        1184,
+        1408,
         144
       ],
       "id": "4b529eda-727f-475a-b8a7-cb97a603301d",
@@ -534,7 +534,7 @@
       "type": "n8n-nodes-base.form",
       "typeVersion": 2.5,
       "position": [
-        1392,
+        1616,
         144
       ],
       "id": "bac0363d-d86c-4bb1-82c7-04326f6f30c0",
@@ -551,7 +551,7 @@
       "type": "n8n-nodes-base.form",
       "typeVersion": 2.5,
       "position": [
-        1184,
+        1408,
         320
       ],
       "id": "c6ac9e1c-acb0-44a4-b6d5-e98f5ce8d5a5",
@@ -568,8 +568,8 @@
       "type": "n8n-nodes-base.form",
       "typeVersion": 2.5,
       "position": [
-        976,
-        32
+        576,
+        16
       ],
       "id": "747a6e80-c4a4-442c-b0b6-2d1725e9cb02",
       "name": "Show Order Confirmation",
@@ -620,6 +620,56 @@
       ],
       "id": "19340cb1-1315-46a6-b9e8-901eb4f40fb0",
       "name": "Build Order Choices"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 4
+          },
+          "conditions": [
+            {
+              "id": "9c33d79f-6135-4736-8153-8f8c5ab6d119",
+              "leftValue": "={{ $json.orderChoices.length }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.4,
+      "position": [
+        336,
+        240
+      ],
+      "id": "196435ad-b93d-4871-862d-0f094ca631f9",
+      "name": "Any Open Orders"
+    },
+    {
+      "parameters": {
+        "operation": "completion",
+        "completionTitle": "No orders available to cancel",
+        "completionMessage": "There are no open orders to cancel right now.",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.form",
+      "typeVersion": 2.5,
+      "position": [
+        544,
+        384
+      ],
+      "id": "ae85d2c3-750b-4be8-a001-9b1fc04cb5f1",
+      "name": "No orders available to cancel",
+      "webhookId": "e4bf0ad5-a837-4cd1-9ad7-8fb80d1cd93e"
     }
   ],
   "pinData": {},
@@ -774,7 +824,25 @@
       "main": [
         [
           {
+            "node": "Any Open Orders",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Any Open Orders": {
+      "main": [
+        [
+          {
             "node": "Enter Cancellation Details",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No orders available to cancel",
             "type": "main",
             "index": 0
           }
@@ -787,7 +855,7 @@
     "executionOrder": "v1",
     "binaryMode": "separate"
   },
-  "versionId": "a6813d15-c274-42b3-bf79-9e6cbb129f37",
+  "versionId": "2a99159a-e9c2-476c-9c92-5622103959e3",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "e5f6f0794d76a7267ccad955d36717f75b12cd6b8e74b8b55918288283ba4d40"
