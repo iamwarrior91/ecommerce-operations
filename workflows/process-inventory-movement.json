@@ -1,0 +1,329 @@
+{
+  "name": "Process Inventory Movement",
+  "nodes": [
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "14tQW_PhDiIsmKy9FvRWwH2zJrzleN0PjWConfEcOP-c",
+          "mode": "list",
+          "cachedResultName": "Ecommerce Inventory Tracker",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/14tQW_PhDiIsmKy9FvRWwH2zJrzleN0PjWConfEcOP-c/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1845832881,
+          "mode": "list",
+          "cachedResultName": "Movements",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/14tQW_PhDiIsmKy9FvRWwH2zJrzleN0PjWConfEcOP-c/edit#gid=1845832881"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "=Event ID",
+              "lookupValue": "={{ $json.event_id }}"
+            }
+          ]
+        },
+        "options": {
+          "dataLocationOnSheet": {
+            "values": {
+              "rangeDefinition": "specifyRange",
+              "headerRow": 5,
+              "firstDataRow": 6
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -224,
+        0
+      ],
+      "id": "f2aa324f-d89c-4227-8c40-a9cc65fd209f",
+      "name": "Find Existing Event",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "ZA1EqEA6zPRJ3peH",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 4
+          },
+          "conditions": [
+            {
+              "id": "cd2600dd-bc7e-4ddf-8d7a-85f6c69c84f7",
+              "leftValue": "={{ $json[\"Event ID\"] }}",
+              "rightValue": "=",
+              "operator": {
+                "type": "string",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.4,
+      "position": [
+        -64,
+        0
+      ],
+      "id": "8279ae04-e50b-4f74-9e93-1bec020837d8",
+      "name": "Is New Event?"
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "={{ 'https://sheets.googleapis.com/v4/spreadsheets/14tQW_PhDiIsmKy9FvRWwH2zJrzleN0PjWConfEcOP-c/values/Movements!A' + $json.nextRow + ':J' + $json.nextRow + '?valueInputOption=USER_ENTERED' }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleSheetsOAuth2Api",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ {\n  majorDimension: \"ROWS\",\n  values: [[\n    $('Prepare Movement').first().json['Event ID'],\n    $('Prepare Movement').first().json.Timestamp,\n    $('Prepare Movement').first().json.SKU,\n    $('Prepare Movement').first().json[\"Event type\"],\n    $('Prepare Movement').first().json[\"Order / reference\"],\n    $('Prepare Movement').first().json[\"On hand change\"],\n    $('Prepare Movement').first().json[\"Reserved change\"],\n    $('Prepare Movement').first().json.Source,\n    \"\",\n    \"\"\n  ]]\n} }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        848,
+        -144
+      ],
+      "id": "17ddf9d2-7ce4-48ed-b3f6-6831b9ec5342",
+      "name": "Write Movement",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "ZA1EqEA6zPRJ3peH",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://sheets.googleapis.com/v4/spreadsheets/14tQW_PhDiIsmKy9FvRWwH2zJrzleN0PjWConfEcOP-c/values/Movements!A6:J1005",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleSheetsOAuth2Api",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        400,
+        -144
+      ],
+      "id": "147293e2-402e-4851-99d7-4c1a6b215d1a",
+      "name": "Read Movement Rows",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "ZA1EqEA6zPRJ3peH",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const rows = $input.first().json.values ?? [];\nconst nextRow = 6 + rows.length;\n\nif (nextRow > 1005) {\n  throw new Error('Movement capacity reached. Extend the tracker first.');\n}\n\nreturn [{ json: { nextRow } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        624,
+        -144
+      ],
+      "id": "e9820931-6d76-4367-bd32-de85c81a1a4d",
+      "name": "Choose Movement Row"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "9e7a68f7-594e-474f-b780-4e9852223db8",
+              "name": "Event ID",
+              "value": "={{ $('Receive Movement').first().json.event_id }}",
+              "type": "string"
+            },
+            {
+              "id": "f26b4786-3fc1-4914-aafa-d9c3fd8e3d96",
+              "name": "Timestamp",
+              "value": "={{ $now.toFormat('yyyy-MM-dd HH:mm:ss') }}",
+              "type": "string"
+            },
+            {
+              "id": "d098dfb6-2509-4b18-9136-6fbfc51976bc",
+              "name": "SKU",
+              "value": "={{ $('Receive Movement').first().json.sku }}",
+              "type": "string"
+            },
+            {
+              "id": "99fe8e55-57a5-479e-a240-4d1f159a9556",
+              "name": "Event type",
+              "value": "={{ $('Receive Movement').first().json.event_type }}",
+              "type": "string"
+            },
+            {
+              "id": "7044299e-8875-476f-83c7-9e27e141305f",
+              "name": "Order / reference",
+              "value": "={{ $('Receive Movement').first().json.order_id }}",
+              "type": "string"
+            },
+            {
+              "id": "01787420-bacb-4c00-9d66-48ad054798a9",
+              "name": "On hand change",
+              "value": "={{ ({ Reserve: 0, Ship: -1, Cancel: 0, Receipt: 1, Return: 1 })[$('Receive Movement').first().json.event_type] * $('Receive Movement').first().json.quantity }}",
+              "type": "number"
+            },
+            {
+              "id": "92b75015-5174-461b-a4c9-c2307ed2616f",
+              "name": "Reserved change",
+              "value": "={{ ({ Reserve: 1, Ship: -1, Cancel: -1, Receipt: 0, Return: 0 })[$('Receive Movement').first().json.event_type] * $('Receive Movement').first().json.quantity }}",
+              "type": "number"
+            },
+            {
+              "id": "235778db-ab3b-4b29-baf4-f0c7d5c3840e",
+              "name": "Source",
+              "value": "n8n test",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        176,
+        -144
+      ],
+      "id": "7cfdc041-3015-4c41-bb7e-e0d724a3f5ab",
+      "name": "Prepare Movement"
+    },
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "event_id"
+            },
+            {
+              "name": "order_id"
+            },
+            {
+              "name": "sku"
+            },
+            {
+              "name": "event_type"
+            },
+            {
+              "name": "quantity",
+              "type": "number"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -400,
+        0
+      ],
+      "id": "708bc2dd-e682-4560-908a-dbf3859753ff",
+      "name": "Receive Movement"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Find Existing Event": {
+      "main": [
+        [
+          {
+            "node": "Is New Event?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is New Event?": {
+      "main": [
+        [
+          {
+            "node": "Prepare Movement",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Movement Rows": {
+      "main": [
+        [
+          {
+            "node": "Choose Movement Row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Choose Movement Row": {
+      "main": [
+        [
+          {
+            "node": "Write Movement",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Movement": {
+      "main": [
+        [
+          {
+            "node": "Read Movement Rows",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Receive Movement": {
+      "main": [
+        [
+          {
+            "node": "Find Existing Event",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "0fab54bb-16b7-47b1-8466-d02a6a94950a",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "e5f6f0794d76a7267ccad955d36717f75b12cd6b8e74b8b55918288283ba4d40"
+  },
+  "nodeGroups": [],
+  "id": "BfYHg4pGaB2Gp1w4",
+  "tags": []
+}

@@ -513,7 +513,7 @@
       "typeVersion": 4.7,
       "position": [
         1408,
-        144
+        160
       ],
       "id": "4b529eda-727f-475a-b8a7-cb97a603301d",
       "name": "Log Order Cancelled",
@@ -534,8 +534,8 @@
       "type": "n8n-nodes-base.form",
       "typeVersion": 2.5,
       "position": [
-        1616,
-        144
+        1776,
+        160
       ],
       "id": "bac0363d-d86c-4bb1-82c7-04326f6f30c0",
       "name": "Show Cancellation Confirmation",
@@ -568,7 +568,7 @@
       "type": "n8n-nodes-base.form",
       "typeVersion": 2.5,
       "position": [
-        576,
+        800,
         16
       ],
       "id": "747a6e80-c4a4-442c-b0b6-2d1725e9cb02",
@@ -597,7 +597,7 @@
       "typeVersion": 4.7,
       "position": [
         -48,
-        224
+        240
       ],
       "id": "ddb260e0-af32-4ae3-bbe3-2d23b347fce6",
       "name": "Read Order Events",
@@ -616,7 +616,7 @@
       "typeVersion": 2,
       "position": [
         144,
-        224
+        240
       ],
       "id": "19340cb1-1315-46a6-b9e8-901eb4f40fb0",
       "name": "Build Order Choices"
@@ -670,6 +670,176 @@
       "id": "ae85d2c3-750b-4be8-a001-9b1fc04cb5f1",
       "name": "No orders available to cancel",
       "webhookId": "e4bf0ad5-a837-4cd1-9ad7-8fb80d1cd93e"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "BfYHg4pGaB2Gp1w4",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/BfYHg4pGaB2Gp1w4",
+          "cachedResultName": "Process Inventory Movement"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "event_id": "={{ $json[\"Event ID\"] }}",
+            "order_id": "={{ $json[\"Order ID\"] }}",
+            "sku": "={{ $json[\"SKU\"] }}",
+            "event_type": "=Reserve",
+            "quantity": "={{ Number($json[\"Quantity\"]) }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "event_id",
+              "displayName": "event_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "order_id",
+              "displayName": "order_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "sku",
+              "displayName": "sku",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "event_type",
+              "displayName": "event_type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "quantity",
+              "displayName": "quantity",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.4,
+      "position": [
+        608,
+        16
+      ],
+      "id": "74598e41-bb7a-4aab-a06b-4416b6c93af6",
+      "name": "Reserve Stock"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "BfYHg4pGaB2Gp1w4",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/BfYHg4pGaB2Gp1w4",
+          "cachedResultName": "Process Inventory Movement"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "event_id": "={{ $json[\"Event ID\"] }}",
+            "order_id": "={{ $json[\"Order ID\"] }}",
+            "sku": "={{ $json[\"SKU\"] }}",
+            "event_type": "=Cancel",
+            "quantity": "={{ Number($json[\"Quantity\"]) }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "event_id",
+              "displayName": "event_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "order_id",
+              "displayName": "order_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "sku",
+              "displayName": "sku",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "event_type",
+              "displayName": "event_type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "quantity",
+              "displayName": "quantity",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.4,
+      "position": [
+        1600,
+        160
+      ],
+      "id": "1ac95934-0864-4ceb-8ed4-c05459e5e4e3",
+      "name": "Release Reserved Stock"
     }
   ],
   "pinData": {},
@@ -791,7 +961,7 @@
       "main": [
         [
           {
-            "node": "Show Cancellation Confirmation",
+            "node": "Release Reserved Stock",
             "type": "main",
             "index": 0
           }
@@ -802,7 +972,7 @@
       "main": [
         [
           {
-            "node": "Show Order Confirmation",
+            "node": "Reserve Stock",
             "type": "main",
             "index": 0
           }
@@ -848,6 +1018,28 @@
           }
         ]
       ]
+    },
+    "Reserve Stock": {
+      "main": [
+        [
+          {
+            "node": "Show Order Confirmation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Release Reserved Stock": {
+      "main": [
+        [
+          {
+            "node": "Show Cancellation Confirmation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "active": false,
@@ -855,7 +1047,7 @@
     "executionOrder": "v1",
     "binaryMode": "separate"
   },
-  "versionId": "2a99159a-e9c2-476c-9c92-5622103959e3",
+  "versionId": "42550108-069b-49d4-9ac5-5f1b3b99f65a",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "e5f6f0794d76a7267ccad955d36717f75b12cd6b8e74b8b55918288283ba4d40"
