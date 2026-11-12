@@ -1,6 +1,6 @@
 # Ecommerce operations
 
-An n8n order form backed by Google Sheets. Placing an order reserves stock. Cancelling it releases the reservation.
+This project uses n8n and Google Sheets to track inventory. When someone places an order through the form, n8n logs the order and reserves the requested quantity. Cancelling the order releases those units back into available stock. Both stock changes are recorded in the **Movements** tab.
 
 ## Run locally
 
@@ -28,3 +28,13 @@ Open [n8n](http://localhost:5679). Run `docker compose down` to stop it and keep
 ### Process Inventory Movement
 
 ![Process Inventory Movement workflow](images/process-inventory-movement.png)
+
+## Inventory tracker
+
+### Inventory
+
+![Google Sheets inventory overview](images/sheets-inventory-overview.png)
+
+### Movements
+
+![Google Sheets stock movements](images/sheets-inventory-movements.png)
