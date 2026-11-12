@@ -18,3 +18,13 @@ Open [n8n](http://localhost:5679). Run `docker compose down` to stop it and keep
 - [Inventory tracker](https://docs.google.com/spreadsheets/d/14tQW_PhDiIsmKy9FvRWwH2zJrzleN0PjWConfEcOP-c/edit)
 - [Workflow exports](workflows/) for order intake, inventory movements, and manual testing.
 - [Workbook template and generator](inventory-tracker/)
+
+## Workflows
+
+### Order Event Intake
+
+![Order Event Intake workflow](images/order-event-intake.png)
+
+### Process Inventory Movement
+
+![Process Inventory Movement workflow](images/process-inventory-movement.png)
