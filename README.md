@@ -29,6 +29,10 @@ Open [n8n](http://localhost:5679). Run `docker compose down` to stop it and keep
 
 ![Process Inventory Movement workflow](images/process-inventory-movement.png)
 
+**Order Event Intake** records new orders and cancellations from the form, then requests a stock reservation or release.
+
+**Process Inventory Movement** checks the event ID for duplicates before logging the stock change in the **Movements** tab.
+
 ## Inventory tracker
 
 ### Inventory
