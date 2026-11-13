@@ -33,6 +33,12 @@ Open [n8n](http://localhost:5679). Run `docker compose down` to stop it and keep
 
 **Process Inventory Movement** checks the event ID for duplicates before logging the stock change in the **Movements** tab.
 
+## Order form
+
+| Choose an event | Place an order | Cancel an order |
+| --- | --- | --- |
+| ![Event type dropdown](images/form-record-event.png) | ![SKU and quantity fields](images/form-place-reservation.png) | ![Order ID dropdown](images/form-cancel-reservation.png) |
+
 ## Inventory tracker
 
 ### Inventory
@@ -42,3 +48,7 @@ Open [n8n](http://localhost:5679). Run `docker compose down` to stop it and keep
 ### Movements
 
 ![Google Sheets stock movements](images/sheets-inventory-movements.png)
+
+**Inventory** shows on-hand, reserved, and available stock for each SKU.
+
+**Movements** logs stock changes. The Inventory tab uses those entries to update its counts.
